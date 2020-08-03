@@ -1,8 +1,13 @@
+'use strict';
+
 class Airport {
-  land(plane) {
-    return true;
+  constructor() {
+    this._hangar = []
   }
-  takeOff(plane) {
-    return true;
-  }
-}
+  planes(){
+    return this._hangar;
+  };
+  clearForLanding(plane) {
+    this._hangar.push(plane);
+  };
+};
