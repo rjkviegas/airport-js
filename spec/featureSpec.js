@@ -3,12 +3,15 @@
 describe('Feature Test:', function() {
   var plane;
   var airport;
-
+  var weather;
   beforeEach(function() {
     plane = new Plane();
     airport = new Airport();
   });
-
+  describe('in NOT stormy weather', function() {
+    beforeEach(function() {
+      spyOn(Math, 'random').and.returnValue(0);
+    });
     it('planes can land at an airport', function() {
       plane.land(airport);
       expect(airport.planes()).toContain(plane);
@@ -19,17 +22,31 @@ describe('Feature Test:', function() {
       plane.takeOff(airport);
       expect(airport.planes()).not.toContain(plane);
     })
-    describe('when weather is stormy', function() {})
-    it('prevents take off when weather is stormy', function() {
-      plane.land(airport);
-      spyOn(airport, '_isStormy').and.returnValue(true);
-      expect(function() { plane.takeOff(airport); }).toThrowError('cannot take off during storm');
-      expect(airport.planes()).toContain(plane);
-    });
+  })
+    describe('when weather is stormy', function() {
 
-    it('prevents landing when weather is stormy', function() {
-      spyOn(airport, '_isStormy').and.returnValue(true);
-      expect(function() { plane.land(airport); }).toThrowError('cannot land during storm');
-      expect(airport.planes()).not.toContain(plane)
+      it('take off prevented', function() {
+        spyOn(Math, 'random').and.returnValue(0);
+        plane.land(airport);
+        spyOn(airport._weather, 'isStormy').and.returnValue(true);
+        expect(function() { plane.takeOff(airport); }).toThrowError('cannot take off during storm');
+        expect(airport.planes()).toContain(plane);
+      });
+  
+      it('landing prevented', function() {
+        spyOn(Math, 'random').and.returnValue(1);
+        expect(function() { plane.land(airport); }).toThrowError('cannot land during storm');
+        expect(airport.planes()).not.toContain(plane)
+      })
     })
+
+    describe('when airport is at capacity', function() {
+
+      it('planes are prevented from landing', function() {
+        spyOn(Math, 'random').and.returnValue(0);
+        spyOn(airport, '_isAtCapacity').and.returnValue(true);
+        expect(function() { plane.land(airport); }).toThrowError('cannot land as airport at capacity');
+      })
+    })
+    
   });
