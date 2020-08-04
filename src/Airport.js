@@ -11,6 +11,12 @@ class Airport {
     this._hangar.push(plane);
   };
   clearForTakeOff(plane) {
+    if(this.isStormy()) {
+      throw new Error('cannot take off during storm');
+    }
     this._hangar.pop(plane);
-  }
+  };
+  isStormy() {
+    return false;
+  };
 };
